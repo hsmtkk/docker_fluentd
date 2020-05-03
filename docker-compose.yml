@@ -1,0 +1,41 @@
+version: "3"
+services:
+  pinger:
+    image: github.com/hsmtkk/docker_fluentd/pinger
+    depends_on:
+      - fluentd
+      - squid
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: docker.pinger
+  squid:
+    image: github.com/hsmtkk/docker_fluentd/squid
+    depends_on:
+      - fluentd
+      - nginx
+    volumes:
+      - "./squid/var/logs:/usr/local/squid/var/logs"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: docker.squid
+  nginx:
+    image: nginx:1.17.10
+    depends_on:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: docker.nginx
+  fluentd:
+    image: fluent/fluentd:v1.10.3-1.0
+    command: fluentd -c /fluentd/etc/fluentd.conf -v
+    volumes:
+      - "./fluentd/etc:/fluentd/etc:ro"
+    ports:
+      - "24224:24224"
+
