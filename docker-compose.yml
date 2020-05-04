@@ -22,6 +22,19 @@ services:
       options:
         fluentd-address: 127.0.0.1:24224
         tag: docker.squid
+  squid_logger:
+    image: fluent/fluent-bit:1.4
+    depends_on:
+      - squid
+    command: /fluent-bit/bin/fluent-bit --config=/fluent-bit.conf
+    volumes:
+      - "./squid/var/logs:/usr/local/squid/var/logs:ro"
+      - "./squid_logger/fluent-bit.conf:/fluent-bit.conf:ro"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: docker.squid_logger
   nginx:
     image: nginx:1.17.10
     depends_on:
