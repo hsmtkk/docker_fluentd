@@ -45,10 +45,9 @@ services:
         fluentd-address: 127.0.0.1:24224
         tag: docker.nginx
   fluentd:
-    image: fluent/fluentd:v1.10.3-1.0
-    command: fluentd -c /fluentd/etc/fluentd.conf -v
+    image: fluent/fluent-bit:1.4
+    command: /fluent-bit/bin/fluent-bit --config=/fluent-bit.conf
     volumes:
-      - "./fluentd/etc:/fluentd/etc:ro"
+      - "./fluentd/fluent-bit.conf:/fluent-bit.conf:ro"
     ports:
       - "24224:24224"
-
